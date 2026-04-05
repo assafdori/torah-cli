@@ -18,6 +18,13 @@ Or with curl:
 curl -fsSL https://raw.githubusercontent.com/assafdori/torah-cli/main/install.sh | sh
 ```
 
+Or with Homebrew:
+
+```sh
+brew tap assafdori/tap
+brew install torah
+```
+
 ## Usage
 
 Launch the interactive TUI browser:

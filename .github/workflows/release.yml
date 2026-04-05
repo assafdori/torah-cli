@@ -129,3 +129,90 @@ jobs:
         run: cd npm-pkg && npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  update-homebrew-tap:
+    name: Update Homebrew Tap
+    needs: release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') && secrets.HOMEBREW_TAP_GITHUB_TOKEN != ''
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Resolve checksums
+        id: checksums
+        run: |
+          set -euo pipefail
+          SHA_MACOS_ARM=$(sha256sum artifacts/torah-aarch64-apple-darwin.tar.gz | awk '{print $1}')
+          SHA_MACOS_INTEL=$(sha256sum artifacts/torah-x86_64-apple-darwin.tar.gz | awk '{print $1}')
+          SHA_LINUX_ARM=$(sha256sum artifacts/torah-aarch64-unknown-linux-gnu.tar.gz | awk '{print $1}')
+          SHA_LINUX_INTEL=$(sha256sum artifacts/torah-x86_64-unknown-linux-gnu.tar.gz | awk '{print $1}')
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "sha_macos_arm=${SHA_MACOS_ARM}" >> "$GITHUB_OUTPUT"
+          echo "sha_macos_intel=${SHA_MACOS_INTEL}" >> "$GITHUB_OUTPUT"
+          echo "sha_linux_arm=${SHA_LINUX_ARM}" >> "$GITHUB_OUTPUT"
+          echo "sha_linux_intel=${SHA_LINUX_INTEL}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout tap repository
+        uses: actions/checkout@v4
+        with:
+          repository: assafdori/homebrew-tap
+          token: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+          path: homebrew-tap
+
+      - name: Write formula
+        run: |
+          set -euo pipefail
+          mkdir -p homebrew-tap/Formula
+          cat > homebrew-tap/Formula/torah.rb <<EOF
+          class Torah < Formula
+            desc "Torah TUI for terminal reading"
+            homepage "https://github.com/assafdori/torah-cli"
+            version "${{ steps.checksums.outputs.version }}"
+
+            on_macos do
+              on_arm do
+                url "https://github.com/assafdori/torah-cli/releases/download/v${{ steps.checksums.outputs.version }}/torah-aarch64-apple-darwin.tar.gz"
+                sha256 "${{ steps.checksums.outputs.sha_macos_arm }}"
+              end
+              on_intel do
+                url "https://github.com/assafdori/torah-cli/releases/download/v${{ steps.checksums.outputs.version }}/torah-x86_64-apple-darwin.tar.gz"
+                sha256 "${{ steps.checksums.outputs.sha_macos_intel }}"
+              end
+            end
+
+            on_linux do
+              on_arm do
+                url "https://github.com/assafdori/torah-cli/releases/download/v${{ steps.checksums.outputs.version }}/torah-aarch64-unknown-linux-gnu.tar.gz"
+                sha256 "${{ steps.checksums.outputs.sha_linux_arm }}"
+              end
+              on_intel do
+                url "https://github.com/assafdori/torah-cli/releases/download/v${{ steps.checksums.outputs.version }}/torah-x86_64-unknown-linux-gnu.tar.gz"
+                sha256 "${{ steps.checksums.outputs.sha_linux_intel }}"
+              end
+            end
+
+            def install
+              bin.install "torah"
+            end
+
+            test do
+              assert_match "Usage", shell_output("#{bin}/torah --help")
+            end
+          end
+          EOF
+
+      - name: Commit and push formula update
+        run: |
+          set -euo pipefail
+          cd homebrew-tap
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/torah.rb
+          git diff --staged --quiet && exit 0
+          git commit -m "torah v${{ steps.checksums.outputs.version }}"
+          git push
