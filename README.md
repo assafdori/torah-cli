@@ -9,7 +9,7 @@ Built with Rust. Single binary. Works fully offline with bundled data.
 ## Install
 
 ```sh
-npm install -g torah-cli
+npm install -g @assafdori/torah-cli
 ```
 
 Or with curl:
