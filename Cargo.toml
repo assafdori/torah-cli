@@ -1,0 +1,51 @@
+[package]
+name = "torah-cli"
+version = "0.5.4"
+edition = "2021"
+description = "A Torah TUI for terminal reading"
+license = "MIT"
+repository = "https://github.com/assafdori/torah-cli"
+homepage = "https://github.com/assafdori/torah-cli"
+readme = "README.md"
+
+[[bin]]
+name = "torah"
+path = "src/main.rs"
+
+[dependencies]
+ratatui = { version = "0.29", features = ["crossterm"] }
+crossterm = "0.28"
+tachyonfx = "0.9"
+clap = { version = "4", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+directories = "6"
+confy = "0.6"
+unicode-width = "0.2"
+once_cell = "1"
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
+
+# Config for 'dist'
+[workspace.metadata.dist]
+cargo-dist-version = "0.31.0"
+ci = "github"
+installers = ["shell", "npm"]
+targets = [
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
+    "x86_64-unknown-linux-gnu",
+    "aarch64-unknown-linux-gnu",
+    "x86_64-pc-windows-msvc",
+]
+install-path = "CARGO_HOME"

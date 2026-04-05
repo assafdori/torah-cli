@@ -1,0 +1,18 @@
+{
+  "name": "torah-cli",
+  "version": "0.5.4",
+  "description": "A Torah TUI for terminal reading",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/assafdori/torah-cli"
+  },
+  "bin": {
+    "torah": "bin/run.js"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "keywords": ["torah", "tanakh", "cli", "tui", "judaism", "text"],
+  "author": "whoisyurii"
+}
