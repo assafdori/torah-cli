@@ -4,7 +4,7 @@ A Torah TUI for terminal reading. Read the Five Books in your terminal.
 
 Built with Rust. Single binary. Works fully offline with bundled data.
 
-![torah-cli demo](assets/demo.gif)
+![torah-cli demo](assets/torah.png)
 
 ## Install
 
@@ -13,6 +13,7 @@ npm install -g @assafdori/torah-cli
 ```
 
 Or with curl:
+
 ```sh
 curl -fsSL https://raw.githubusercontent.com/assafdori/torah-cli/main/install.sh | sh
 ```
@@ -20,41 +21,49 @@ curl -fsSL https://raw.githubusercontent.com/assafdori/torah-cli/main/install.sh
 ## Usage
 
 Launch the interactive TUI browser:
+
 ```sh
 torah
 ```
 
 Read a specific verse:
+
 ```sh
 torah read Genesis 1:1
 ```
 
 Read a chapter:
+
 ```sh
 torah read Exodus 3
 ```
 
 Read a verse range:
+
 ```sh
 torah read Deut 6:4-9
 ```
 
 Search the Torah:
+
 ```sh
 torah search "I am"
 ```
 
 Random verse:
+
 ```sh
 torah random
 ```
 
 Verse of the day:
+
 ```sh
 torah today
 ```
 
 Replay the startup animation:
+
 ```sh
 torah intro
 ```
