@@ -6,6 +6,7 @@ Built with Rust. Single binary. Works fully offline with bundled data.
 
 ![torah-banner](assets/torah-banner.png)
 ![torah-cli](assets/torah.png)
+![torah-read](assets/torah-read.png)
 
 ## Install
 
