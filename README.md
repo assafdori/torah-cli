@@ -4,7 +4,8 @@ A Torah TUI for terminal reading. Read the Five Books in your terminal.
 
 Built with Rust. Single binary. Works fully offline with bundled data.
 
-![torah-cli demo](assets/torah.png)
+![torah-banner](assets/torah-banner.png)
+![torah-cli](assets/torah.png)
 
 ## Install
 
