@@ -22,6 +22,7 @@ curl -fsSL https://raw.githubusercontent.com/assafdori/torah-cli/main/install.sh
 Or with Homebrew:
 
 ```sh
+# Uses https://github.com/assafdori/homebrew-tap
 brew tap assafdori/tap
 brew install torah
 ```
